@@ -12,7 +12,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { FavoritesView } from './components/FavoritesView';
 import { OrdersView } from './components/OrdersView';
 import type { Product } from './types';
-import { Sparkles, ArrowUpDown } from 'lucide-react';
+import { Sparkles, ArrowUpDown, Send } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const { 
@@ -173,14 +173,25 @@ const AppContent: React.FC = () => {
 
           <div>
             <h4 className="font-black text-sm text-uzum-text mb-3">Qo'llab-quvvatlash</h4>
-            <p className="font-bold text-sm text-uzum-primary mb-1">+998 78 140-00-00</p>
-            <p className="text-gray-400 mb-4">Har kuni 08:00 dan 22:00 gacha</p>
-            
-            <div className="p-3 bg-purple-50 rounded-2xl border border-purple-100">
-              <span className="text-[11px] font-bold text-purple-900 block mb-1">Admin Tizimi:</span>
-              <span className="text-[10px] text-purple-700 block font-mono">Tel/Parol: +998991992012</span>
-              <span className="text-[10px] text-purple-700 block font-mono">Email: asilbekturkmanov12@gmail.com</span>
-            </div>
+            <a 
+              href="tel:+998991992012" 
+              className="font-bold text-sm text-uzum-primary hover:underline mb-1 block"
+              title="Telefon qilish"
+            >
+              +998 99 199-20-12
+            </a>
+            <p className="text-gray-400 text-xs mb-3">Har kuni 08:00 dan 22:00 gacha</p>
+
+            <a 
+              href="https://t.me/htpAsilbek" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 p-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-xl border border-sky-200 transition-colors font-bold text-xs shadow-xs"
+              title="Telegram orqali bog'lanish"
+            >
+              <Send className="w-4 h-4 text-sky-600" />
+              <span>Telegram: @htpAsilbek</span>
+            </a>
           </div>
         </div>
 

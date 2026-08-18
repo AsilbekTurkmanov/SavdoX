@@ -137,9 +137,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-xl font-black tracking-tight">Admin Panel</h2>
-                <span className="bg-uzum-yellow text-uzum-text text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
-                  Asilbek Turkmanov (+998991992012)
-                </span>
+                <a 
+                  href="tel:+998991992012"
+                  className="bg-uzum-yellow hover:opacity-90 text-uzum-text text-[10px] font-black px-2 py-0.5 rounded-full uppercase transition-opacity"
+                  title="Telefon qilish"
+                >
+                  Asilbek Turkmanov (+998 99 199-20-12)
+                </a>
               </div>
               <p className="text-xs text-purple-200">SavdoX mahsulot va buyurtmalar boshqaruvi</p>
             </div>
@@ -486,7 +490,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl">
                 <span className="text-xs text-blue-700 font-bold block mb-1">Boshqaruvchi Admin</span>
                 <span className="text-sm font-black text-blue-900 block mt-1">Asilbek Turkmanov</span>
-                <span className="text-[11px] text-blue-700 font-mono">+998991992012</span>
+                <a href="tel:+998991992012" className="text-[11px] text-blue-700 font-bold hover:underline block mt-1">+998 99 199-20-12</a>
+                <a href="https://t.me/htpAsilbek" target="_blank" rel="noopener noreferrer" className="text-[11px] text-sky-600 font-bold hover:underline block mt-0.5">Telegram: @htpAsilbek</a>
               </div>
             </div>
           )}

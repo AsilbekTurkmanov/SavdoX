@@ -93,23 +93,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <p className="text-xs text-gray-400">Tizimga kirish yoki ro'yxatdan o'tish</p>
         </div>
 
-        {/* Special Admin Quick Hint Box */}
-        <div className="bg-purple-50 border border-purple-200 rounded-2xl p-3 mb-4 text-xs text-purple-900">
-          <div className="flex items-center space-x-1.5 font-bold mb-1">
-            <ShieldCheck className="w-4 h-4 text-uzum-primary" />
-            <span>Admin Tizimi Ma'lumotlari:</span>
-          </div>
-          <p className="text-[11px] text-purple-800 leading-tight mb-2">
-            Telefon/Parol: <code className="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-uzum-primary">+998991992012</code><br/>
-            Email: <code className="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-uzum-primary">asilbekturkmanov12@gmail.com</code>
-          </p>
-          <button
-            onClick={setQuickAdminCredentials}
-            className="w-full bg-uzum-primary text-white text-[11px] font-bold py-1 rounded-xl hover:bg-uzum-primary-hover transition-colors"
-          >
-            Admin ma'lumotlarini avto-to'ldirish
-          </button>
-        </div>
+
 
         {/* Tab switchers */}
         <div className="flex bg-uzum-bg p-1 rounded-xl mb-4 text-xs font-bold">
@@ -147,7 +131,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={loginInput}
                   onChange={(e) => setLoginInput(e.target.value)}
-                  placeholder="+998991992012 yoki email"
+                  placeholder="+998 90 123 45 67 yoki email"
                   className="w-full bg-uzum-bg border border-gray-200 rounded-xl py-2.5 pl-9 pr-3 outline-none focus:border-uzum-primary font-medium"
                 />
               </div>

@@ -10,7 +10,8 @@ import {
   LogOut, 
   ChevronDown,
   Sparkles,
-  Package
+  Package,
+  Send
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -93,8 +94,20 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="hidden sm:inline-block text-gray-500">Savolingiz bormi? <a href="tel:+998781400000" className="hover:text-uzum-primary font-medium">+998 78 140-00-00</a></span>
+          <div className="flex items-center space-x-3">
+            <span className="hidden sm:inline-block text-gray-500">
+              Savolingiz bormi? <a href="tel:+998991992012" className="hover:text-uzum-primary font-bold text-gray-800">+998 99 199-20-12</a>
+            </span>
+            <a 
+              href="https://t.me/htpAsilbek" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-1 text-sky-600 hover:text-sky-700 font-bold bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded text-[11px] transition-colors"
+              title="Telegram orqali bog'lanish"
+            >
+              <Send className="w-3 h-3 text-sky-600" />
+              <span>@htpAsilbek</span>
+            </a>
             <span className="bg-uzum-yellow/30 text-uzum-text px-2 py-0.5 rounded font-semibold text-[11px]">
               SavdoX Nasiya 0-0-12
             </span>
