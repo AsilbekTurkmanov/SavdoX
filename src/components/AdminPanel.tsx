@@ -56,7 +56,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [isHit, setIsHit] = useState(false);
   const [image, setImage] = useState(PRESET_IMAGES[0].url);
   const [description, setDescription] = useState('');
-  const [specsText, setSpecsText] = useState('Ekran: 6.5 dyuym\nKafolat: 1 yil Uzum');
+  const [specsText, setSpecsText] = useState('Ekran: 6.5 dyuym\nKafolat: 1 yil SavdoX');
 
   // Edit modal state
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -98,7 +98,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       isHit,
       stock: numStock,
       image,
-      description: description || 'Uzum market platformasida kafolatlangan yuqori sifatli mahsulot.',
+      description: description || 'SavdoX platformasida kafolatlangan yuqori sifatli mahsulot.',
       specs: specsRecord
     });
 
@@ -141,7 +141,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                   Asilbek Turkmanov (+998991992012)
                 </span>
               </div>
-              <p className="text-xs text-purple-200">Uzum Market SavdoX mahsulot va buyurtmalar boshqaruvi</p>
+              <p className="text-xs text-purple-200">SavdoX mahsulot va buyurtmalar boshqaruvi</p>
             </div>
           </div>
 

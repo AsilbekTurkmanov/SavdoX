@@ -41,7 +41,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [reviewsList, setReviewsList] = useState([
     { id: '1', name: 'Jasur Bek', rating: 5, date: '12 Yanvar 2025', comment: 'Juda tez va sifatli yetib keldi. Mahsulot rasmdegidek original!' },
-    { id: '2', name: 'Malika R.', rating: 5, date: '3 Fevral 2025', comment: 'Uzum marketdan har doim nasiyaga olaman. Juda qulay va halol hal etishadi.' }
+    { id: '2', name: 'Malika R.', rating: 5, date: '3 Fevral 2025', comment: 'SavdoX platformasidan har doim nasiyaga olaman. Juda qulay va halol hal etishadi.' }
   ]);
 
   const galleryImages = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
@@ -120,7 +120,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <div className="bg-uzum-bg p-4 rounded-2xl space-y-2.5 text-xs text-gray-700">
               <div className="flex items-center space-x-2.5">
                 <Truck className="w-4 h-4 text-uzum-primary shrink-0" />
-                <span><strong>1 KUNDA</strong> Uzum Topsirish punktiga bepul yetkazish</span>
+                <span><strong>1 KUNDA</strong> SavdoX Topshirish punktiga bepul yetkazish</span>
               </div>
               <div className="flex items-center space-x-2.5">
                 <ShieldCheck className="w-4 h-4 text-green-600 shrink-0" />
@@ -215,7 +215,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <div className="flex items-center justify-between text-xs font-bold text-gray-800 mb-2">
                     <span className="flex items-center space-x-1">
                       <Calculator className="w-3.5 h-3.5 text-uzum-primary" />
-                      <span>Uzum Nasiya Muddatli to'lov:</span>
+                      <span>SavdoX Nasiya Muddatli to'lov:</span>
                     </span>
                     <span className="text-uzum-primary font-black text-sm">
                       {formatPrice(calculateMonthly(installmentMonths))} / oy

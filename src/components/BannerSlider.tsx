@@ -5,7 +5,7 @@ const BANNERS = [
   {
     id: 1,
     title: 'Katta Bahor Savdosi 70% gacha Chegirmalar',
-    subtitle: 'Barcha maishiy texnika va smartfonlarga uzum kafolati bilan',
+    subtitle: 'Barcha maishiy texnika va smartfonlarga SavdoX kafolati bilan',
     tag: 'MEGA AKSIYA',
     bgGradient: 'from-purple-900 via-uzum-primary to-indigo-900',
     btnText: 'Xarid qilish',
@@ -15,7 +15,7 @@ const BANNERS = [
     id: 2,
     title: 'Halol Nasiya 0-0-12 Oylik Boshlang\'ich To\'lovsiz',
     subtitle: 'Hech qanday ortiqcha hujjatlarsiz, pasportingiz kifoya',
-    tag: 'UZUM NASIYA',
+    tag: 'SAVDOX NASIYA',
     bgGradient: 'from-amber-600 via-amber-500 to-yellow-600',
     btnText: 'Rasmiylashtirish',
     image: 'https://images.unsplash.com/photo-1556742049-0a67daf4004a?auto=format&fit=crop&w=1200&q=80'

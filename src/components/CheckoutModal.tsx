@@ -21,7 +21,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [customerName, setCustomerName] = useState(user?.name || '');
   const [customerPhone, setCustomerPhone] = useState(user?.phone || '+998');
   const [deliveryMethod, setDeliveryMethod] = useState<'Pvz' | 'Courier'>('Pvz');
-  const [deliveryAddress, setDeliveryAddress] = useState(`${selectedCity} shahri, Uzum Topshirish punkti #12 (Markaziy)`);
+  const [deliveryAddress, setDeliveryAddress] = useState(`${selectedCity} shahri, SavdoX Topshirish punkti #12 (Markaziy)`);
   const [paymentMethod, setPaymentMethod] = useState('Uzcard / Humo');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState('');
@@ -116,7 +116,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     type="button"
                     onClick={() => {
                       setDeliveryMethod('Pvz');
-                      setDeliveryAddress(`${selectedCity} shahri, Uzum Topshirish punkti #12 (Markaziy)`);
+                      setDeliveryAddress(`${selectedCity} shahri, SavdoX Topshirish punkti #12 (Markaziy)`);
                     }}
                     className={`p-3 rounded-xl border text-left flex flex-col justify-between transition-all ${deliveryMethod === 'Pvz' ? 'border-uzum-primary bg-uzum-primary-light text-uzum-primary font-bold' : 'border-gray-200 text-gray-700'}`}
                   >
@@ -160,7 +160,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 >
                   <option value="Uzcard / Humo">Uzcard / Humo (Plastik karta orqali)</option>
                   <option value="Naqd pul">Naqd pul (Mahsulotni olganda to'lov)</option>
-                  <option value="Uzum Nasiya 12 oy">Uzum Nasiya (Halol muddatli to'lov)</option>
+                  <option value="SavdoX Nasiya 12 oy">SavdoX Nasiya (Halol muddatli to'lov)</option>
                 </select>
               </div>
 

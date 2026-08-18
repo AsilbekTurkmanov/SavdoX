@@ -87,9 +87,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Header Branding */}
         <div className="text-center mb-6">
           <div className="w-12 h-12 bg-uzum-primary rounded-2xl text-white font-black text-2xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-uzum-primary/20">
-            u
+            S
           </div>
-          <h2 className="text-xl font-black text-uzum-text">Uzum Market SavdoX</h2>
+          <h2 className="text-xl font-black text-uzum-text">SavdoX Platformasi</h2>
           <p className="text-xs text-gray-400">Tizimga kirish yoki ro'yxatdan o'tish</p>
         </div>
 

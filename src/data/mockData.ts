@@ -39,7 +39,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=80'
     ],
-    description: 'A17 Pro chipiga ega, alyuminiy titanium korpusli, 48MP asosiy kamerali eng so\'nggi avlod iPhone. Uzum kafolati bilan 1 kunda yetkazib beriladi.',
+    description: 'A17 Pro chipiga ega, alyuminiy titanium korpusli, 48MP asosiy kamerali eng so\'nggi avlod iPhone. SavdoX kafolati bilan 1 kunda yetkazib beriladi.',
     specs: {
       'Ekran': '6.7 dyuym Super Retina XDR OLED',
       'Protsessor': 'Apple A17 Pro',
@@ -147,7 +147,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-7',
-    title: 'Erkaklar sviteri oversize premiyum paxta Uzum Collection',
+    title: 'Erkaklar sviteri oversize premiyum paxta SavdoX Collection',
     category: 'Kiyim-kechak',
     price: 289000,
     originalPrice: 390000,

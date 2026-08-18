@@ -137,17 +137,17 @@ const AppContent: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-uzum-primary text-white flex items-center justify-center font-black text-lg">
-                u
+                S
               </div>
               <span className="text-lg font-black text-uzum-primary">
-                uzum <span className="text-uzum-text">market</span>
+                Savdo <span className="text-uzum-text">X</span>
               </span>
             </div>
             <p className="text-gray-500 leading-relaxed mb-3">
-              O'zbekistondagi eng yirik onlayn internet-do'kon muqobili. Barcha turdagi mahsulotlar 1 kunda yetkaziladi.
+              SavdoX — O'zbekistondagi eng yirik zamonaviy internet-do'kon platformasi. Barcha turdagi mahsulotlar 1 kunda yetkaziladi.
             </p>
             <div className="bg-uzum-yellow/40 p-2.5 rounded-xl border border-uzum-yellow text-uzum-text font-bold text-[11px]">
-              Halol Nasiya 0-0-12 muddatli to'lov
+              SavdoX Nasiya 0-0-12 muddatli to'lov
             </div>
           </div>
 
@@ -156,7 +156,7 @@ const AppContent: React.FC = () => {
             <ul className="space-y-2">
               <li><a href="#" className="hover:text-uzum-primary transition-colors">Topshirish punktlari</a></li>
               <li><a href="#" className="hover:text-uzum-primary transition-colors">Vakansiyalar</a></li>
-              <li><a href="#" className="hover:text-uzum-primary transition-colors">Uzum Nasiya haqida</a></li>
+              <li><a href="#" className="hover:text-uzum-primary transition-colors">SavdoX Nasiya haqida</a></li>
               <li><a href="#" className="hover:text-uzum-primary transition-colors">Kafolat va qaytarish</a></li>
             </ul>
           </div>
@@ -185,7 +185,7 @@ const AppContent: React.FC = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-gray-400 text-[11px]">
-          <p>© 2025 Uzum Market SavdoX. Barcha huquqlar himoyalangan.</p>
+          <p>© 2025 SavdoX Platformasi. Barcha huquqlar himoyalangan.</p>
           <p>Yaratuvchi: Asilbek Turkmanov</p>
         </div>
       </footer>

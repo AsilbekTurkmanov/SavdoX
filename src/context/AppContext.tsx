@@ -235,7 +235,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
     const newOrder: Order = {
-      id: `UZ-${Math.floor(100000 + Math.random() * 900000)}`,
+      id: `SX-${Math.floor(100000 + Math.random() * 900000)}`,
       items: cart.map(item => ({
         productTitle: item.product.title,
         productImage: item.product.image,
@@ -248,7 +248,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerName: user ? user.name : 'Mehmon',
       customerPhone: user ? user.phone : '+998900000000',
       deliveryMethod,
-      deliveryAddress: deliveryAddress || 'Toshkent shahri, Uzum Topshirish punkti',
+      deliveryAddress: deliveryAddress || 'Toshkent shahri, SavdoX Topshirish punkti',
       paymentMethod
     };
 

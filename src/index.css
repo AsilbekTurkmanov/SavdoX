@@ -39,7 +39,7 @@
   animation: fadeIn 0.25s ease-out forwards;
 }
 
-/* Uzum market custom badges */
+/* SavdoX custom badges */
 .badge-express {
   background: linear-gradient(135deg, #7000ff 0%, #a200ff 100%);
   color: white;
@@ -49,4 +49,114 @@
   background-color: #ffe600;
   color: #1f2026;
   font-weight: 600;
+}
+
+/* ==========================================================================
+   SAVDOX MEDIA QUERIES (TELEFON, PLANSHET, NOUTBOOK VA KOMPYUTERLAR UCHUN)
+   ========================================================================== */
+
+/* 1. TELEFONLAR (Smartphones & Mobile Devices: <= 639px) */
+@media screen and (max-width: 639px) {
+  .savdox-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .savdox-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+  }
+
+  .savdox-header-logo {
+    font-size: 1.25rem;
+  }
+
+  .savdox-modal-content {
+    max-height: 96vh;
+    border-radius: 1.25rem;
+    padding: 0.875rem;
+  }
+
+  .savdox-banner-height {
+    min-height: 180px;
+  }
+
+  .savdox-hide-on-phone {
+    display: none !important;
+  }
+}
+
+/* 2. PLANSHETLAR (Tablets & iPads: 640px - 1023px) */
+@media screen and (min-width: 640px) and (max-width: 1023px) {
+  .savdox-container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .savdox-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .savdox-header-logo {
+    font-size: 1.5rem;
+  }
+
+  .savdox-modal-content {
+    max-height: 90vh;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .savdox-banner-height {
+    min-height: 260px;
+  }
+
+  .savdox-hide-on-tablet {
+    display: none !important;
+  }
+}
+
+/* 3. NOUTBOOKLAR (Laptops / Notebooks: 1024px - 1279px) */
+@media screen and (min-width: 1024px) and (max-width: 1279px) {
+  .savdox-container {
+    max-width: 1150px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .savdox-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .savdox-banner-height {
+    min-height: 300px;
+  }
+
+  .savdox-hide-on-laptop {
+    display: none !important;
+  }
+}
+
+/* 4. KOMPYUTERLAR (Desktop Monitors & Ultra-Wide PC Screens: >= 1280px) */
+@media screen and (min-width: 1280px) {
+  .savdox-container {
+    max-width: 1360px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .savdox-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .savdox-banner-height {
+    min-height: 340px;
+  }
 }

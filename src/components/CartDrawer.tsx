@@ -183,7 +183,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
               )}
               <div className="flex justify-between">
-                <span>Yetkazib berish (Topshirish punktiga):</span>
+                <span>Yetkazib berish (SavdoX Topshirish punktiga):</span>
                 <span className="text-green-600 font-bold">BEPUL</span>
               </div>
               <div className="flex justify-between text-sm font-black text-uzum-text pt-2 border-t border-gray-100">

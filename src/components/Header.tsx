@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-4">
             <span className="hidden sm:inline-block text-gray-500">Savolingiz bormi? <a href="tel:+998781400000" className="hover:text-uzum-primary font-medium">+998 78 140-00-00</a></span>
             <span className="bg-uzum-yellow/30 text-uzum-text px-2 py-0.5 rounded font-semibold text-[11px]">
-              Halol Nasiya 0-0-12
+              SavdoX Nasiya 0-0-12
             </span>
           </div>
         </div>
@@ -113,14 +113,14 @@ export const Header: React.FC<HeaderProps> = ({
           className="flex items-center space-x-2 focus:outline-none group text-left shrink-0"
         >
           <div className="w-10 h-10 rounded-xl bg-uzum-primary text-white flex items-center justify-center font-black text-xl shadow-md shadow-uzum-primary/20 group-hover:scale-105 transition-transform">
-            u
+            S
           </div>
           <div className="flex flex-col">
             <span className="text-2xl font-black tracking-tight text-uzum-primary leading-none">
-              uzum <span className="text-uzum-text text-xl font-bold">market</span>
+              Savdo<span className="text-uzum-text text-xl font-bold">X</span>
             </span>
             <span className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">
-              SavdoX Versiyasi
+              Rasmiy Platformasi
             </span>
           </div>
         </button>
