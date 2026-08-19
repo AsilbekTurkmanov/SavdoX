@@ -31,11 +31,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
 
-    const res = login(loginInput, loginPass);
+    const res = await login(loginInput, loginPass);
     if (res.success) {
       setMessage({ type: 'success', text: res.message });
       setTimeout(() => {
@@ -49,7 +49,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
 
@@ -58,7 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    const res = register(regName, regPhone, regEmail, regPass);
+    const res = await register(regName, regPhone, regEmail, regPass);
     if (res.success) {
       setMessage({ type: 'success', text: res.message });
       setTimeout(() => {

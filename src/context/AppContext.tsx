@@ -3,11 +3,9 @@ import type { Product, Category, User, CartItem, Order } from '../types';
 import { 
   INITIAL_PRODUCTS, 
   INITIAL_CATEGORIES, 
-  INITIAL_ADMIN_USER, 
-  ADMIN_PHONE, 
-  ADMIN_EMAIL, 
-  ADMIN_PASS 
+  INITIAL_ADMIN_USER
 } from '../data/mockData';
+import { api } from '../api/client';
 
 interface AppContextType {
   products: Product[];
@@ -24,13 +22,13 @@ interface AppContextType {
   setSelectedCity: (city: string) => void;
   
   // Auth functions
-  login: (phoneOrEmail: string, pass: string) => { success: boolean; isAdmin?: boolean; message: string };
-  register: (name: string, phone: string, email: string, pass: string) => { success: boolean; message: string };
+  login: (phoneOrEmail: string, pass: string) => Promise<{ success: boolean; isAdmin?: boolean; message: string }>;
+  register: (name: string, phone: string, email: string, pass: string) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
   
   // Product management (Admin)
-  addProduct: (product: Omit<Product, 'id'>) => void;
-  deleteProduct: (id: string) => void;
+  addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   updateProduct: (product: Product) => void;
   
   // Cart & Favorites
@@ -38,11 +36,11 @@ interface AppContextType {
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  toggleFavorite: (productId: string) => void;
+  toggleFavorite: (productId: string) => Promise<void>;
   
   // Checkout
-  placeOrder: (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => Order | null;
-  updateOrderStatus: (orderId: string, status: Order['status']) => void;
+  placeOrder: (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => Promise<Order | null>;
+  updateOrderStatus: (orderId: string, status: Order['status']) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -59,25 +57,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const [products, setProducts] = useState<Product[]>(() => getInitial('products', INITIAL_PRODUCTS));
-  const [categories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>(() => getInitial('categories', INITIAL_CATEGORIES));
   const [user, setUser] = useState<User | null>(() => getInitial('user', null));
   const [cart, setCart] = useState<CartItem[]>(() => getInitial('cart', []));
   const [favorites, setFavorites] = useState<string[]>(() => getInitial('favorites', []));
   const [orders, setOrders] = useState<Order[]>(() => getInitial('orders', []));
-  const [registeredUsers, setRegisteredUsers] = useState<{ phone: string; email: string; pass: string; user: User }[]>(() => 
-    getInitial('registered_users', [
-      {
-        phone: ADMIN_PHONE,
-        email: ADMIN_EMAIL,
-        pass: ADMIN_PASS,
-        user: INITIAL_ADMIN_USER
-      }
-    ])
-  );
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState('Toshkent');
+
+  // Load data from Backend PostgreSQL API on mount
+  useEffect(() => {
+    async function loadDataFromBackend() {
+      try {
+        const [backendProducts, backendCategories, backendOrders] = await Promise.all([
+          api.getProducts(),
+          api.getCategories(),
+          api.getOrders()
+        ]);
+
+        if (backendProducts && backendProducts.length > 0) {
+          setProducts(backendProducts);
+        }
+        if (backendCategories && backendCategories.length > 0) {
+          setCategories(backendCategories);
+        }
+        if (backendOrders && backendOrders.length > 0) {
+          setOrders(backendOrders);
+        }
+      } catch (e) {
+        console.warn('Backend server offline, using local state/storage');
+      }
+    }
+    loadDataFromBackend();
+  }, []);
+
+  // Fetch favorites if user logged in
+  useEffect(() => {
+    if (user?.id) {
+      api.getFavorites(user.id).then(favs => {
+        if (favs && favs.length > 0) setFavorites(favs);
+      });
+    }
+  }, [user]);
 
   // Persistence side effects
   useEffect(() => {
@@ -100,87 +123,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('savdox_orders', JSON.stringify(orders));
   }, [orders]);
 
-  useEffect(() => {
-    localStorage.setItem('savdox_registered_users', JSON.stringify(registeredUsers));
-  }, [registeredUsers]);
-
-  // Auth logic
-  const login = (phoneOrEmail: string, pass: string) => {
-    const cleanInput = phoneOrEmail.trim().toLowerCase();
-    const cleanPass = pass.trim();
-
-    // Check specific Admin credentials rule
-    const isAdminCredentials = 
-      (cleanInput === ADMIN_PHONE.toLowerCase() || cleanInput === '991992012' || cleanInput === ADMIN_EMAIL.toLowerCase()) && 
-      cleanPass === ADMIN_PASS;
-
-    if (isAdminCredentials) {
-      setUser(INITIAL_ADMIN_USER);
-      return { success: true, isAdmin: true, message: 'Admin panelga muvaffaqiyatli kirildingiz!' };
+  // Auth logic via API
+  const login = async (phoneOrEmail: string, pass: string) => {
+    const res = await api.login(phoneOrEmail, pass);
+    if (res.success && res.user) {
+      setUser(res.user);
     }
-
-    // Check registered database
-    const found = registeredUsers.find(
-      u => (u.phone.toLowerCase() === cleanInput || u.email.toLowerCase() === cleanInput) && u.pass === cleanPass
-    );
-
-    if (found) {
-      setUser(found.user);
-      return { 
-        success: true, 
-        isAdmin: found.user.role === 'admin', 
-        message: `Hush kelibsiz, ${found.user.name}!` 
-      };
-    }
-
-    return { 
-      success: false, 
-      message: 'Telefon raqam, email yoki parol noto\'g\'ri. Agar ro\'yxatdan o\'tmagan bo\'lsangiz, iltimos ro\'yxatdan o\'ting.' 
-    };
+    return res;
   };
 
-  const register = (name: string, phone: string, email: string, pass: string) => {
-    const cleanPhone = phone.trim();
-    const cleanEmail = email.trim().toLowerCase();
-
-    // Check existing
-    const exists = registeredUsers.some(u => u.phone === cleanPhone || u.email === cleanEmail);
-    if (exists) {
-      return { success: false, message: 'Ushbu telefon raqam yoki email allaqachon ro\'yxatdan o\'tgan.' };
+  const register = async (name: string, phone: string, email: string, pass: string) => {
+    const res = await api.register(name, phone, email, pass);
+    if (res.success && res.user) {
+      setUser(res.user);
     }
-
-    const isAdmin = cleanPhone === ADMIN_PHONE || cleanEmail === ADMIN_EMAIL;
-    const newUser: User = {
-      id: `user-${Date.now()}`,
-      name: name.trim() || 'Foydalanuvchi',
-      phone: cleanPhone,
-      email: cleanEmail,
-      role: isAdmin ? 'admin' : 'user'
-    };
-
-    setRegisteredUsers(prev => [...prev, { phone: cleanPhone, email: cleanEmail, pass, user: newUser }]);
-    setUser(newUser);
-
-    return { 
-      success: true, 
-      message: isAdmin ? 'Admin sifatida ro\'yxatdan o\'tildi!' : 'Muvaffaqiyatli ro\'yxatdan o\'tildi!' 
-    };
+    return res;
   };
 
   const logout = () => {
     setUser(null);
   };
 
-  // Admin Product Actions
-  const addProduct = (newProdData: Omit<Product, 'id'>) => {
-    const newProduct: Product = {
-      ...newProdData,
-      id: `prod-${Date.now()}`
-    };
-    setProducts(prev => [newProduct, ...prev]);
+  // Admin Product Actions via API
+  const addProduct = async (newProdData: Omit<Product, 'id'>) => {
+    const created = await api.addProduct(newProdData);
+    if (created) {
+      setProducts(prev => [created, ...prev]);
+    } else {
+      // Fallback local addition if server unavailable
+      const localProduct: Product = { ...newProdData, id: `prod-${Date.now()}` };
+      setProducts(prev => [localProduct, ...prev]);
+    }
   };
 
-  const deleteProduct = (id: string) => {
+  const deleteProduct = async (id: string) => {
+    await api.deleteProduct(id);
     setProducts(prev => prev.filter(p => p.id !== id));
     setCart(prev => prev.filter(item => item.product.id !== id));
     setFavorites(prev => prev.filter(fId => fId !== id));
@@ -221,30 +198,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCart([]);
   };
 
-  // Favorites
-  const toggleFavorite = (productId: string) => {
-    setFavorites(prev => 
-      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
-    );
+  // Favorites via API
+  const toggleFavorite = async (productId: string) => {
+    const userId = user?.id || 'guest-user';
+    const res = await api.toggleFavorite(userId, productId);
+    if (res) {
+      setFavorites(res.favorites);
+    } else {
+      setFavorites(prev => 
+        prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+      );
+    }
   };
 
-  // Checkout
-  const placeOrder = (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => {
+  // Checkout via API
+  const placeOrder = async (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => {
     if (cart.length === 0) return null;
 
     const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-    const newOrder: Order = {
-      id: `SX-${Math.floor(100000 + Math.random() * 900000)}`,
-      items: cart.map(item => ({
-        productTitle: item.product.title,
-        productImage: item.product.image,
-        price: item.product.price,
-        quantity: item.quantity
-      })),
+    const orderData = {
+      items: cart,
       totalAmount,
-      status: 'Tayyorlanmoqda',
-      date: new Date().toLocaleString('uz-UZ'),
       customerName: user ? user.name : 'Mehmon',
       customerPhone: user ? user.phone : '+998900000000',
       deliveryMethod,
@@ -252,12 +227,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       paymentMethod
     };
 
-    setOrders(prev => [newOrder, ...prev]);
-    clearCart();
-    return newOrder;
+    const createdOrder = await api.placeOrder(orderData);
+
+    if (createdOrder) {
+      setOrders(prev => [createdOrder, ...prev]);
+      clearCart();
+      return createdOrder;
+    } else {
+      // Local fallback
+      const fallbackOrder: Order = {
+        id: `SX-${Math.floor(100000 + Math.random() * 900000)}`,
+        items: cart.map(item => ({
+          productTitle: item.product.title,
+          productImage: item.product.image,
+          price: item.product.price,
+          quantity: item.quantity
+        })),
+        totalAmount,
+        status: 'Tayyorlanmoqda',
+        date: new Date().toLocaleString('uz-UZ'),
+        customerName: user ? user.name : 'Mehmon',
+        customerPhone: user ? user.phone : '+998900000000',
+        deliveryMethod,
+        deliveryAddress: deliveryAddress || 'Toshkent shahri, SavdoX Topshirish punkti',
+        paymentMethod
+      };
+      setOrders(prev => [fallbackOrder, ...prev]);
+      clearCart();
+      return fallbackOrder;
+    }
   };
 
-  const updateOrderStatus = (orderId: string, status: Order['status']) => {
+  const updateOrderStatus = async (orderId: string, status: Order['status']) => {
+    await api.updateOrderStatus(orderId, status);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
   };
 

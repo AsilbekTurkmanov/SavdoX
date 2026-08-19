@@ -28,11 +28,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerPhone) return;
 
-    const newOrder = placeOrder(deliveryMethod, deliveryAddress, paymentMethod);
+    const newOrder = await placeOrder(deliveryMethod, deliveryAddress, paymentMethod);
     if (newOrder) {
       setPlacedOrderId(newOrder.id);
       setIsSubmitted(true);

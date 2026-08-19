@@ -6,6 +6,8 @@
   "homepage": "https://asilbekturkmanov.github.io/SavdoX",
   "scripts": {
     "dev": "vite",
+    "server": "node server.js",
+    "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
     "build": "tsc -b && vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
@@ -13,7 +15,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "lucide-react": "^1.31.0",
+    "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
