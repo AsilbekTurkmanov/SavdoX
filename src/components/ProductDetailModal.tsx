@@ -75,17 +75,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-gray-100 relative">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 font-sans animate-fade-in">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] sm:max-h-[92vh] overflow-y-auto shadow-2xl border border-gray-100 relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors shadow-xs"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        <div className="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {/* Left: Product Gallery */}
           <div className="flex flex-col space-y-4">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50 border border-gray-100">
@@ -117,7 +117,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             )}
 
             {/* Delivery Guarantees */}
-            <div className="bg-uzum-bg p-4 rounded-2xl space-y-2.5 text-xs text-gray-700">
+            <div className="bg-uzum-bg p-3 sm:p-4 rounded-2xl space-y-2 text-xs text-gray-700">
               <div className="flex items-center space-x-2.5">
                 <Truck className="w-4 h-4 text-uzum-primary shrink-0" />
                 <span><strong>1 KUNDA</strong> SavdoX Topshirish punktiga bepul yetkazish</span>
@@ -134,7 +134,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
 
           {/* Right: Product Details & Purchase */}
-          <div className="flex flex-col justify-between space-y-6">
+          <div className="flex flex-col justify-between space-y-4 sm:space-y-6">
             <div>
               {/* Category & Title */}
               <div className="flex items-center space-x-2 text-xs text-uzum-muted mb-1">
@@ -142,12 +142,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <span>•</span>
                 <span>Kodi: {product.id}</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-uzum-text leading-snug mb-3">
+              <h1 className="text-lg sm:text-2xl font-bold text-uzum-text leading-snug mb-2 sm:mb-3">
                 {product.title}
               </h1>
 
               {/* Rating */}
-              <div className="flex items-center space-x-2 text-xs mb-4">
+              <div className="flex items-center space-x-2 text-xs mb-3 sm:mb-4">
                 <div className="flex items-center text-amber-400">
                   <Star className="w-4 h-4 fill-amber-400" />
                   <span className="font-black text-gray-900 ml-1">{product.rating}</span>
@@ -158,8 +158,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {/* Colors selection */}
               {product.colors && product.colors.length > 0 && (
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-gray-700 block mb-2">
+                <div className="mb-3 sm:mb-4">
+                  <label className="text-xs font-bold text-gray-700 block mb-1.5">
                     Rang: <span className="text-uzum-primary font-bold">{selectedColor}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -178,8 +178,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {/* Sizes selection */}
               {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-4">
-                  <label className="text-xs font-bold text-gray-700 block mb-2">
+                <div className="mb-3 sm:mb-4">
+                  <label className="text-xs font-bold text-gray-700 block mb-1.5">
                     O'lcham: <span className="text-uzum-primary font-bold">{selectedSize}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -187,7 +187,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`w-10 h-10 rounded-xl text-xs font-bold border flex items-center justify-center transition-all ${selectedSize === size ? 'border-uzum-primary bg-uzum-primary text-white shadow-md' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs font-bold border flex items-center justify-center transition-all ${selectedSize === size ? 'border-uzum-primary bg-uzum-primary text-white shadow-md' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
                       >
                         {size}
                       </button>
@@ -197,27 +197,27 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               )}
 
               {/* Price box */}
-              <div className="bg-uzum-bg p-4 rounded-2xl mb-4 border border-gray-200/60">
+              <div className="bg-uzum-bg p-3.5 sm:p-4 rounded-2xl mb-3 sm:mb-4 border border-gray-200/60">
                 <div className="text-xs text-gray-500 mb-0.5">Narxi:</div>
                 <div className="flex items-baseline space-x-3">
-                  <span className="text-2xl sm:text-3xl font-black text-uzum-text">
+                  <span className="text-xl sm:text-3xl font-black text-uzum-text">
                     {formatPrice(product.price)}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-sm text-gray-400 line-through">
+                    <span className="text-xs sm:text-sm text-gray-400 line-through">
                       {formatPrice(product.originalPrice)}
                     </span>
                   )}
                 </div>
 
                 {/* Installment calculator */}
-                <div className="mt-3 pt-3 border-t border-gray-200">
+                <div className="mt-3 pt-2.5 border-t border-gray-200">
                   <div className="flex items-center justify-between text-xs font-bold text-gray-800 mb-2">
                     <span className="flex items-center space-x-1">
                       <Calculator className="w-3.5 h-3.5 text-uzum-primary" />
-                      <span>SavdoX Nasiya Muddatli to'lov:</span>
+                      <span>SavdoX Nasiya:</span>
                     </span>
-                    <span className="text-uzum-primary font-black text-sm">
+                    <span className="text-uzum-primary font-black text-xs sm:text-sm">
                       {formatPrice(calculateMonthly(installmentMonths))} / oy
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       <button
                         key={m}
                         onClick={() => setInstallmentMonths(m)}
-                        className={`py-1.5 text-xs font-bold rounded-xl border transition-all ${installmentMonths === m ? 'bg-uzum-yellow text-uzum-text border-uzum-yellow shadow' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                        className={`py-1.5 text-xs font-bold rounded-xl border transition-all ${installmentMonths === m ? 'bg-uzum-yellow text-uzum-text border-uzum-yellow shadow-xs' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                       >
                         {m} oy
                       </button>
@@ -237,34 +237,34 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
 
               {/* Quantity adjustment */}
-              <div className="flex items-center space-x-4 mb-6">
+              <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
                 <span className="text-xs font-bold text-gray-700">Miqdori:</span>
                 <div className="flex items-center space-x-2 border border-gray-200 rounded-xl p-1 bg-white">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center text-xs sm:text-sm"
                   >
                     -
                   </button>
-                  <span className="w-8 text-center font-bold text-sm">{quantity}</span>
+                  <span className="w-7 text-center font-bold text-xs sm:text-sm">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center text-xs sm:text-sm"
                   >
                     +
                   </button>
                 </div>
-                <span className="text-xs text-gray-500">Omborda: <strong>{product.stock} ta mavjud</strong></span>
+                <span className="text-xs text-gray-500">Omborda: <strong>{product.stock} ta</strong></span>
               </div>
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-uzum-yellow hover:bg-uzum-yellow-hover text-uzum-text font-black py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg transition-all active:scale-95 text-sm sm:text-base"
+                className="flex-1 bg-uzum-yellow hover:bg-uzum-yellow-hover text-uzum-text font-black py-3 sm:py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 text-xs sm:text-base"
               >
-                <ShoppingBag className="w-5 h-5" />
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Savatga qo'shish</span>
               </button>
 
@@ -274,9 +274,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   onOpenCart();
                   onClose();
                 }}
-                className="flex-1 bg-uzum-primary hover:bg-uzum-primary-hover text-white font-black py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg transition-all active:scale-95 text-sm sm:text-base"
+                className="flex-1 bg-uzum-primary hover:bg-uzum-primary-hover text-white font-black py-3 sm:py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 text-xs sm:text-base"
               >
-                <Zap className="w-5 h-5 fill-uzum-yellow text-uzum-yellow" />
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5 fill-uzum-yellow text-uzum-yellow" />
                 <span>1 bosishda xarid</span>
               </button>
             </div>

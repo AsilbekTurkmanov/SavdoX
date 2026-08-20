@@ -22,8 +22,8 @@ export const FavoritesView: React.FC<FavoritesViewProps> = ({
   const favoriteProducts = products.filter(p => favorites.includes(p.id));
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 font-sans animate-fade-in">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Heart className="w-5 h-5 text-uzum-red fill-uzum-red" />
@@ -37,7 +37,7 @@ export const FavoritesView: React.FC<FavoritesViewProps> = ({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6">
           {favoriteProducts.length === 0 ? (
             <div className="text-center py-16 space-y-3">
               <Heart className="w-12 h-12 text-gray-300 mx-auto" />
@@ -45,7 +45,7 @@ export const FavoritesView: React.FC<FavoritesViewProps> = ({
               <p className="text-xs text-gray-400">Mahsulotlardagi yurakcha tugmasini bosish orqali saralashingiz mumkin.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
               {favoriteProducts.map(p => (
                 <ProductCard 
                   key={p.id} 

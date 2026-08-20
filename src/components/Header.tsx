@@ -21,6 +21,8 @@ interface HeaderProps {
   onOpenAdmin: () => void;
   onOpenFavorites: () => void;
   onOpenOrders: () => void;
+  isCatalogOpen?: boolean;
+  onToggleCatalog?: () => void;
 }
 
 const CITIES = ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', "Farg'ona", 'Qarshi', 'Nukus', 'Xiva'];
@@ -30,7 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCart,
   onOpenAdmin,
   onOpenFavorites,
-  onOpenOrders
+  onOpenOrders,
+  isCatalogOpen: externalIsCatalogOpen,
+  onToggleCatalog: externalOnToggleCatalog
 }) => {
   const { 
     user, 
@@ -46,19 +50,22 @@ export const Header: React.FC<HeaderProps> = ({
     setSelectedCity
   } = useApp();
 
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [internalIsCatalogOpen, setInternalIsCatalogOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+
+  const isCatalogOpen = externalIsCatalogOpen !== undefined ? externalIsCatalogOpen : internalIsCatalogOpen;
+  const toggleCatalog = externalOnToggleCatalog || (() => setInternalIsCatalogOpen(!internalIsCatalogOpen));
 
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const favoritesCount = favorites.length;
 
   return (
-    <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-gray-100 font-sans">
+    <header className="sticky top-0 z-40 bg-white shadow-xs border-b border-gray-100 font-sans">
       {/* Top Bar */}
-      <div className="bg-uzum-bg text-xs border-b border-gray-200/60 py-1.5 px-4 text-uzum-muted">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="bg-uzum-bg text-xs border-b border-gray-200/60 py-1 sm:py-1.5 px-2 sm:px-4 text-uzum-muted">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-[11px] sm:text-xs">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* City selector */}
             <div className="relative">
               <button 
@@ -94,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <span className="hidden sm:inline-block text-gray-500">
               Savolingiz bormi? <a href="tel:+998991992012" className="hover:text-uzum-primary font-bold text-gray-800">+998 99 199-20-12</a>
             </span>
@@ -102,13 +109,13 @@ export const Header: React.FC<HeaderProps> = ({
               href="https://t.me/htpAsilbek" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-1 text-sky-600 hover:text-sky-700 font-bold bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded text-[11px] transition-colors"
+              className="inline-flex items-center space-x-1 text-sky-600 hover:text-sky-700 font-bold bg-sky-50 hover:bg-sky-100 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] transition-colors"
               title="Telegram orqali bog'lanish"
             >
               <Send className="w-3 h-3 text-sky-600" />
               <span>@htpAsilbek</span>
             </a>
-            <span className="bg-uzum-yellow/30 text-uzum-text px-2 py-0.5 rounded font-semibold text-[11px]">
+            <span className="bg-uzum-yellow/30 text-uzum-text px-1.5 py-0.5 rounded font-semibold text-[10px] sm:text-[11px] whitespace-nowrap">
               SavdoX Nasiya 0-0-12
             </span>
           </div>
@@ -116,66 +123,37 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Header Bar */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo */}
         <button 
           onClick={() => {
             setSelectedCategory(null);
             setSearchQuery('');
           }}
-          className="flex items-center space-x-2 focus:outline-none group text-left shrink-0"
+          className="flex items-center space-x-1.5 sm:space-x-2 focus:outline-none group text-left shrink-0"
         >
-          <div className="w-10 h-10 rounded-xl bg-uzum-primary text-white flex items-center justify-center font-black text-xl shadow-md shadow-uzum-primary/20 group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-uzum-primary text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-md shadow-uzum-primary/20 group-hover:scale-105 transition-transform">
             S
           </div>
           <div className="flex flex-col">
-            <span className="text-2xl font-black tracking-tight text-uzum-primary leading-none">
-              Savdo<span className="text-uzum-text text-xl font-bold">X</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-uzum-primary leading-none">
+              Savdo<span className="text-uzum-text text-lg sm:text-xl font-bold">X</span>
             </span>
-            <span className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">
+            <span className="hidden sm:block text-[10px] text-gray-400 font-semibold tracking-wider uppercase">
               Rasmiy Platformasi
             </span>
           </div>
         </button>
 
-        {/* Catalog Button */}
-        <div className="relative shrink-0">
+        {/* Catalog Button (Desktop) */}
+        <div className="relative shrink-0 hidden sm:block">
           <button
-            onClick={() => setIsCatalogOpen(!isCatalogOpen)}
+            onClick={toggleCatalog}
             className="flex items-center space-x-2 bg-uzum-primary-light text-uzum-primary hover:bg-uzum-primary hover:text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200"
           >
             <Grid className="w-4 h-4" />
             <span>Katalog</span>
           </button>
-
-          {/* Catalog Dropdown */}
-          {isCatalogOpen && (
-            <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-50 animate-fade-in">
-              <button
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setIsCatalogOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center justify-between ${selectedCategory === null ? 'bg-uzum-primary text-white' : 'hover:bg-uzum-bg text-gray-800'}`}
-              >
-                <span>Barcha kategoriyalar</span>
-                <Sparkles className="w-4 h-4" />
-              </button>
-              <div className="h-px bg-gray-100 my-1"></div>
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    setSelectedCategory(cat.name);
-                    setIsCatalogOpen(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-colors flex items-center justify-between ${selectedCategory === cat.name ? 'bg-uzum-primary-light text-uzum-primary font-bold' : 'hover:bg-uzum-bg text-gray-700'}`}
-                >
-                  <span>{cat.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Search Bar */}
@@ -185,18 +163,18 @@ export const Header: React.FC<HeaderProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Mahsulotlar va turkumlar bo'yicha qidiruv..."
-              className="w-full bg-uzum-bg border-2 border-transparent focus:border-uzum-primary focus:bg-white text-uzum-text placeholder-gray-400 text-sm rounded-xl py-2.5 pl-4 pr-10 outline-none transition-all duration-200"
+              placeholder="Qidiruv..."
+              className="w-full bg-uzum-bg border-2 border-transparent focus:border-uzum-primary focus:bg-white text-uzum-text placeholder-gray-400 text-xs sm:text-sm rounded-xl py-2 sm:py-2.5 pl-3 sm:pl-4 pr-8 sm:pr-10 outline-none transition-all duration-200"
             />
             {searchQuery ? (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 text-gray-400 hover:text-gray-600 text-xs bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center"
+                className="absolute right-2.5 text-gray-400 hover:text-gray-600 text-xs bg-gray-200 rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"
               >
                 ✕
               </button>
             ) : (
-              <Search className="absolute right-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Search className="absolute right-2.5 sm:right-3.5 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 pointer-events-none" />
             )}
           </div>
         </div>
@@ -207,16 +185,16 @@ export const Header: React.FC<HeaderProps> = ({
           {user?.role === 'admin' && (
             <button
               onClick={onOpenAdmin}
-              className="flex items-center space-x-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:opacity-90 px-3 py-2 rounded-xl text-xs font-bold shadow-sm transition-all"
+              className="flex items-center space-x-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:opacity-90 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold shadow-sm transition-all"
               title="Admin Panelga Kirish"
             >
-              <ShieldCheck className="w-4 h-4 text-uzum-yellow animate-pulse" />
-              <span className="hidden lg:inline">Admin Panel</span>
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-uzum-yellow animate-pulse" />
+              <span className="hidden sm:inline">Admin</span>
             </button>
           )}
 
-          {/* User Profile / Auth */}
-          <div className="relative">
+          {/* User Profile / Auth (Desktop) */}
+          <div className="relative hidden sm:block">
             {user ? (
               <div>
                 <button
@@ -291,10 +269,10 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Favorites Button */}
+          {/* Favorites Button (Desktop) */}
           <button
             onClick={onOpenFavorites}
-            className="relative p-2 rounded-xl hover:bg-uzum-bg text-gray-700 transition-colors"
+            className="relative p-2 rounded-xl hover:bg-uzum-bg text-gray-700 transition-colors hidden sm:block"
             title="Sevimlilar"
           >
             <Heart className="w-5 h-5 text-gray-600 hover:text-uzum-red transition-colors" />
@@ -305,13 +283,13 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Cart Button */}
+          {/* Cart Button (Desktop) */}
           <button
             onClick={onOpenCart}
-            className="relative flex items-center space-x-2 bg-uzum-yellow hover:bg-uzum-yellow-hover text-uzum-text px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-95"
+            className="relative items-center space-x-2 bg-uzum-yellow hover:bg-uzum-yellow-hover text-uzum-text px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-95 hidden sm:flex"
           >
             <ShoppingBag className="w-4 h-4 text-uzum-text" />
-            <span className="hidden sm:inline">Savat</span>
+            <span>Savat</span>
             {cartItemsCount > 0 && (
               <span className="bg-uzum-primary text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                 {cartItemsCount}
@@ -320,6 +298,52 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       </div>
+
+      {/* CATALOG MODAL / DROPDOWN (Responsive Desktop + Mobile sheet) */}
+      {isCatalogOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-start justify-center sm:pt-20 animate-fade-in p-0 sm:p-4">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-100 p-4 sm:p-6 space-y-3 relative">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center space-x-2">
+                <Grid className="w-5 h-5 text-uzum-primary" />
+                <h3 className="font-black text-lg text-uzum-text">Mahsulot Kategoriyalari</h3>
+              </div>
+              <button
+                onClick={toggleCatalog}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <button
+              onClick={() => {
+                setSelectedCategory(null);
+                toggleCatalog();
+              }}
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-bold transition-all flex items-center justify-between ${selectedCategory === null ? 'bg-uzum-primary text-white shadow-md' : 'bg-uzum-bg text-gray-800 hover:bg-gray-200/60'}`}
+            >
+              <span>Barcha kategoriyalar</span>
+              <Sparkles className="w-4 h-4" />
+            </button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCategory(cat.name);
+                    toggleCatalog();
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-between border ${selectedCategory === cat.name ? 'border-uzum-primary bg-uzum-primary-light text-uzum-primary shadow-xs' : 'border-gray-200/70 text-gray-700 hover:border-uzum-primary'}`}
+                >
+                  <span>{cat.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

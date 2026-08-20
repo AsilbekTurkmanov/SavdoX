@@ -126,8 +126,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 font-sans animate-fade-in">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-900 via-uzum-primary to-indigo-900 text-white p-4 sm:p-6 flex items-center justify-between">
           <div className="flex items-center space-x-3">

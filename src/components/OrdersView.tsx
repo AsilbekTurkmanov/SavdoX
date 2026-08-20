@@ -14,8 +14,8 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ isOpen, onClose }) => {
   const { orders } = useApp();
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 font-sans animate-fade-in">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Package className="w-5 h-5 text-uzum-primary" />
