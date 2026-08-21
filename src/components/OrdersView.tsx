@@ -9,9 +9,9 @@ interface OrdersViewProps {
 }
 
 export const OrdersView: React.FC<OrdersViewProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
   const { orders } = useApp();
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 font-sans animate-fade-in">

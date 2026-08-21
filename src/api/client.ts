@@ -58,6 +58,21 @@ export const api = {
     }
   },
 
+  async updateProduct(product: Product): Promise<Product | null> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+      if (!res.ok) throw new Error('Mahsulotni tahrirlashda xatolik');
+      return await res.json();
+    } catch (e) {
+      console.error('API Error updating product:', e);
+      return null;
+    }
+  },
+
   // Auth
   async login(phoneOrEmail: string, pass: string): Promise<{ success: boolean; isAdmin?: boolean; message: string; user?: User }> {
     try {

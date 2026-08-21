@@ -14,12 +14,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onClose,
   onOpenCheckout
 }) => {
-  if (!isOpen) return null;
-
   const { cart, removeFromCart, updateCartQuantity, clearCart } = useApp();
   const [promoCode, setPromoCode] = useState('');
   const [discountPercent, setDiscountPercent] = useState(0);
   const [promoError, setPromoError] = useState('');
+
+  if (!isOpen) return null;
 
   const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
@@ -100,7 +100,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         {item.product.title}
                       </h4>
                       <button
-                        onClick={() => removeFromCart(item.product.id)}
+                        onClick={() => removeFromCart(item.product.id, item.selectedColor, item.selectedSize)}
                         className="text-gray-400 hover:text-uzum-red transition-colors shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -121,14 +121,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                     <div className="flex items-center space-x-2 border border-gray-300 rounded-lg bg-white px-1 py-0.5">
                       <button
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
+                        onClick={() => updateCartQuantity(item.product.id, item.quantity - 1, item.selectedColor, item.selectedSize)}
                         className="w-5 h-5 font-bold text-xs text-gray-600 hover:bg-gray-100 rounded"
                       >
                         -
                       </button>
                       <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() => updateCartQuantity(item.product.id, Math.min(item.product.stock, item.quantity + 1), item.selectedColor, item.selectedSize)}
                         className="w-5 h-5 font-bold text-xs text-gray-600 hover:bg-gray-100 rounded"
                       >
                         +

@@ -15,9 +15,9 @@ export const FavoritesView: React.FC<FavoritesViewProps> = ({
   onClose,
   onSelectProduct
 }) => {
-  if (!isOpen) return null;
-
   const { products, favorites } = useApp();
+
+  if (!isOpen) return null;
 
   const favoriteProducts = products.filter(p => favorites.includes(p.id));
 

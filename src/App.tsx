@@ -212,6 +212,7 @@ const AppContent: React.FC = () => {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onOpenCart={() => setIsCartOpen(true)}
+        onOpenCheckout={() => setIsCheckoutOpen(true)}
       />
 
       <CartDrawer

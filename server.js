@@ -561,16 +561,77 @@ app.post('/api/products', async (req, res) => {
       isHit: r.is_hit,
       stock: r.stock,
       image: r.image,
-      gallery: r.gallery,
+      gallery: typeof r.gallery === 'string' ? JSON.parse(r.gallery) : r.gallery || [],
       description: r.description,
-      specs: r.specs,
-      colors: r.colors,
-      sizes: r.sizes
+      specs: typeof r.specs === 'string' ? JSON.parse(r.specs) : r.specs || {},
+      colors: typeof r.colors === 'string' ? JSON.parse(r.colors) : r.colors || [],
+      sizes: typeof r.sizes === 'string' ? JSON.parse(r.sizes) : r.sizes || []
     };
 
     res.status(201).json(newProduct);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error adding product:', err);
+    res.status(500).json({ error: 'Mahsulot qo\'shishda xatolik yuz berdi.' });
+  }
+});
+
+// 3b. PUT Product (Admin - Update Product)
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title, category, price, originalPrice, rating, reviewsCount,
+      installmentPrice, express, isHit, stock, image, gallery,
+      description, specs, colors, sizes
+    } = req.body;
+
+    const query = `
+      UPDATE products SET
+        title = $1, category = $2, price = $3, original_price = $4,
+        rating = $5, reviews_count = $6, installment_price = $7,
+        express = $8, is_hit = $9, stock = $10, image = $11,
+        gallery = $12, description = $13, specs = $14, colors = $15, sizes = $16
+      WHERE id = $17
+      RETURNING *;
+    `;
+
+    const values = [
+      title, category, price, originalPrice || null, rating || 5.0, reviewsCount || 0,
+      installmentPrice || Math.round((price * 1.18) / 12), express, isHit, stock, image,
+      JSON.stringify(gallery || []), description, JSON.stringify(specs || {}),
+      JSON.stringify(colors || []), JSON.stringify(sizes || []), id
+    ];
+
+    const result = await pool.query(query, values);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mahsulot topilmadi.' });
+    }
+
+    const r = result.rows[0];
+    const updatedProduct = {
+      id: r.id,
+      title: r.title,
+      category: r.category,
+      price: parseFloat(r.price),
+      originalPrice: r.original_price ? parseFloat(r.original_price) : undefined,
+      rating: parseFloat(r.rating),
+      reviewsCount: r.reviews_count,
+      installmentPrice: parseFloat(r.installment_price),
+      express: r.express,
+      isHit: r.is_hit,
+      stock: r.stock,
+      image: r.image,
+      gallery: typeof r.gallery === 'string' ? JSON.parse(r.gallery) : r.gallery || [],
+      description: r.description,
+      specs: typeof r.specs === 'string' ? JSON.parse(r.specs) : r.specs || {},
+      colors: typeof r.colors === 'string' ? JSON.parse(r.colors) : r.colors || [],
+      sizes: typeof r.sizes === 'string' ? JSON.parse(r.sizes) : r.sizes || []
+    };
+
+    res.json(updatedProduct);
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ error: 'Mahsulotni tahrirlashda xatolik yuz berdi.' });
   }
 });
 
@@ -578,10 +639,14 @@ app.post('/api/products', async (req, res) => {
 app.delete('/api/products/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM products WHERE id = $1', [id]);
+    const result = await pool.query('DELETE FROM products WHERE id = $1', [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, message: 'Mahsulot topilmadi.' });
+    }
     res.json({ success: true, message: 'Mahsulot bazadan o\'chirildi.' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error deleting product:', err);
+    res.status(500).json({ error: 'Mahsulotni o\'chirishda xatolik yuz berdi.' });
   }
 });
 
@@ -639,7 +704,8 @@ app.post('/api/auth/login', async (req, res) => {
       message: 'Telefon raqam, email yoki parol noto\'g\'ri!'
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error logging in:', err);
+    res.status(500).json({ error: 'Tizimga kirishda xatolik yuz berdi.' });
   }
 });
 
@@ -687,7 +753,8 @@ app.post('/api/auth/register', async (req, res) => {
       user: newUser
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error registering user:', err);
+    res.status(500).json({ error: 'Ro\'yxatdan o\'tishda xatolik yuz berdi.' });
   }
 });
 
@@ -723,32 +790,64 @@ app.get('/api/orders', async (req, res) => {
 
     res.json(orders);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error getting orders:', err);
+    res.status(500).json({ error: 'Buyurtmalarni olishda xatolik yuz berdi.' });
   }
 });
 
-// 8. POST ORDER (Place Order Transaction)
+// 8. POST ORDER (Place Order Transaction with Stock Decrement)
 app.post('/api/orders', async (req, res) => {
   const client = await pool.connect();
   try {
     const { items, totalAmount, customerName, customerPhone, deliveryMethod, deliveryAddress, paymentMethod } = req.body;
-    const orderId = `SX-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderId = `SX-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`;
     const dateStr = new Date().toLocaleString('uz-UZ');
 
     await client.query('BEGIN');
 
+    // 1. Verify stock for all items
+    for (const item of items) {
+      const pId = item.product?.id || item.productId;
+      if (pId) {
+        const prodRes = await client.query('SELECT stock, title FROM products WHERE id = $1 FOR UPDATE', [pId]);
+        if (prodRes.rows.length > 0) {
+          const currentStock = prodRes.rows[0].stock;
+          if (currentStock < item.quantity) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({
+              error: `"${prodRes.rows[0].title}" mahsulotidan omborda yetarli emas (Mavjud: ${currentStock} ta)`
+            });
+          }
+        }
+      }
+    }
+
+    // 2. Insert order
     await client.query(
       `INSERT INTO orders (id, customer_name, customer_phone, delivery_method, delivery_address, payment_method, total_amount, status, date)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [orderId, customerName, customerPhone, deliveryMethod, deliveryAddress, paymentMethod, totalAmount, 'Tayyorlanmoqda', dateStr]
     );
 
+    // 3. Insert items and decrement stock
     for (const item of items) {
+      const pId = item.product?.id || item.productId || null;
+      const pTitle = item.product?.title || item.productTitle;
+      const pImage = item.product?.image || item.productImage;
+      const pPrice = item.product?.price || item.price;
+
       await client.query(
         `INSERT INTO order_items (order_id, product_id, product_title, product_image, price, quantity)
          VALUES ($1, $2, $3, $4, $5, $6)`,
-        [orderId, item.product?.id || null, item.product?.title || item.productTitle, item.product?.image || item.productImage, item.product?.price || item.price, item.quantity]
+        [orderId, pId, pTitle, pImage, pPrice, item.quantity]
       );
+
+      if (pId) {
+        await client.query(
+          'UPDATE products SET stock = stock - $1 WHERE id = $2',
+          [item.quantity, pId]
+        );
+      }
     }
 
     await client.query('COMMIT');
@@ -774,7 +873,8 @@ app.post('/api/orders', async (req, res) => {
     res.status(201).json(createdOrder);
   } catch (err) {
     await client.query('ROLLBACK');
-    res.status(500).json({ error: err.message });
+    console.error('Error placing order:', err);
+    res.status(500).json({ error: 'Buyurtma berishda xatolik yuz berdi.' });
   } finally {
     client.release();
   }
@@ -788,7 +888,8 @@ app.patch('/api/orders/:id/status', async (req, res) => {
     await pool.query('UPDATE orders SET status = $1 WHERE id = $2', [status, id]);
     res.json({ success: true, id, status });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error updating order status:', err);
+    res.status(500).json({ error: 'Buyurtma holatini yangilashda xatolik yuz berdi.' });
   }
 });
 
@@ -800,7 +901,8 @@ app.get('/api/favorites/:userId', async (req, res) => {
     const favoriteIds = result.rows.map(r => r.product_id);
     res.json(favoriteIds);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching favorites:', err);
+    res.status(500).json({ error: 'Sevimlilarni olishda xatolik.' });
   }
 });
 
@@ -822,7 +924,49 @@ app.post('/api/favorites/toggle', async (req, res) => {
     const allFavs = await pool.query('SELECT product_id FROM favorites WHERE user_id = $1', [userId]);
     res.json({ isFavorite, favorites: allFavs.rows.map(r => r.product_id) });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error toggling favorite:', err);
+    res.status(500).json({ error: 'Sevimlilarni o\'zgartirishda xatolik.' });
+  }
+});
+
+// 11. REVIEWS ENDPOINTS
+app.get('/api/reviews/:productId', async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const result = await pool.query(
+      'SELECT id, name, rating, comment, date FROM reviews WHERE product_id = $1 ORDER BY created_at DESC',
+      [productId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: 'Sharhlarni olishda xatolik.' });
+  }
+});
+
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const { productId, name, rating, comment } = req.body;
+    const revId = `rev-${Date.now()}`;
+    const dateStr = new Date().toLocaleDateString('uz-UZ');
+
+    await pool.query(
+      'INSERT INTO reviews (id, product_id, name, rating, comment, date) VALUES ($1, $2, $3, $4, $5, $6)',
+      [revId, productId, name || 'Foydalanuvchi', rating || 5, comment, dateStr]
+    );
+
+    // Update product rating & reviews_count
+    await pool.query(`
+      UPDATE products SET 
+        reviews_count = reviews_count + 1,
+        rating = (SELECT ROUND(AVG(rating)::numeric, 1) FROM reviews WHERE product_id = $1)
+      WHERE id = $1
+    `, [productId]);
+
+    res.status(201).json({ id: revId, productId, name, rating, comment, date: dateStr });
+  } catch (err) {
+    console.error('Error adding review:', err);
+    res.status(500).json({ error: 'Sharh qo\'shishda xatolik.' });
   }
 });
 
@@ -830,3 +974,4 @@ app.post('/api/favorites/toggle', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 SavdoX Express Backend Server http://localhost:${PORT} manzilida ishlamoqda.`);
 });
+

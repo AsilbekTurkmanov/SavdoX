@@ -14,8 +14,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onAdminLoginSuccess
 }) => {
-  if (!isOpen) return null;
-
   const { login, register } = useApp();
   const [tab, setTab] = useState<'login' | 'register'>('login');
 
@@ -30,6 +28,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [regPass, setRegPass] = useState('');
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  if (!isOpen) return null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

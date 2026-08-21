@@ -29,17 +29,17 @@ interface AppContextType {
   // Product management (Admin)
   addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
-  updateProduct: (product: Product) => void;
+  updateProduct: (product: Product) => Promise<void>;
   
   // Cart & Favorites
   addToCart: (product: Product, quantity?: number, color?: string, size?: string) => void;
-  removeFromCart: (productId: string) => void;
-  updateCartQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string, color?: string, size?: string) => void;
+  updateCartQuantity: (productId: string, quantity: number, color?: string, size?: string) => void;
   clearCart: () => void;
   toggleFavorite: (productId: string) => Promise<void>;
   
   // Checkout
-  placeOrder: (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => Promise<Order | null>;
+  placeOrder: (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string, totalOverride?: number) => Promise<Order | null>;
   updateOrderStatus: (orderId: string, status: Order['status']) => Promise<void>;
 }
 
@@ -163,8 +163,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setFavorites(prev => prev.filter(fId => fId !== id));
   };
 
-  const updateProduct = (updated: Product) => {
-    setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+  const updateProduct = async (updated: Product) => {
+    const res = await api.updateProduct(updated);
+    if (res) {
+      setProducts(prev => prev.map(p => p.id === res.id ? res : p));
+    } else {
+      setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    }
   };
 
   // Cart actions
@@ -173,25 +178,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const existingIndex = prev.findIndex(item => 
         item.product.id === product.id && item.selectedColor === color && item.selectedSize === size
       );
+      const currentQty = existingIndex > -1 ? prev[existingIndex].quantity : 0;
+      const maxAllowed = product.stock || 99;
+      const newQty = Math.min(maxAllowed, currentQty + quantity);
+
       if (existingIndex > -1) {
         const updated = [...prev];
-        updated[existingIndex].quantity += quantity;
+        updated[existingIndex].quantity = newQty;
         return updated;
       }
-      return [...prev, { product, quantity, selectedColor: color, selectedSize: size }];
+      return [...prev, { product, quantity: Math.min(maxAllowed, quantity), selectedColor: color, selectedSize: size }];
     });
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.product.id !== productId));
+  const removeFromCart = (productId: string, color?: string, size?: string) => {
+    setCart(prev => prev.filter(item => {
+      if (item.product.id !== productId) return true;
+      if (color !== undefined && item.selectedColor !== color) return true;
+      if (size !== undefined && item.selectedSize !== size) return true;
+      return false;
+    }));
   };
 
-  const updateCartQuantity = (productId: string, quantity: number) => {
+  const updateCartQuantity = (productId: string, quantity: number, color?: string, size?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, color, size);
       return;
     }
-    setCart(prev => prev.map(item => item.product.id === productId ? { ...item, quantity } : item));
+    setCart(prev => prev.map(item => {
+      if (item.product.id === productId &&
+          (color === undefined || item.selectedColor === color) &&
+          (size === undefined || item.selectedSize === size)) {
+        const maxStock = item.product.stock || 99;
+        return { ...item, quantity: Math.min(maxStock, quantity) };
+      }
+      return item;
+    }));
   };
 
   const clearCart = () => {
@@ -212,10 +234,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Checkout via API
-  const placeOrder = async (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string) => {
+  const placeOrder = async (deliveryMethod: 'Pvz' | 'Courier', deliveryAddress: string, paymentMethod: string, totalOverride?: number) => {
     if (cart.length === 0) return null;
 
-    const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const baseAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const totalAmount = totalOverride !== undefined ? totalOverride : baseAmount;
 
     const orderData = {
       items: cart,
@@ -229,6 +252,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const createdOrder = await api.placeOrder(orderData);
 
+    // Update local stock for products in cart
+    setProducts(prev => prev.map(p => {
+      const cartItem = cart.find(ci => ci.product.id === p.id);
+      if (cartItem) {
+        return { ...p, stock: Math.max(0, p.stock - cartItem.quantity) };
+      }
+      return p;
+    }));
+
     if (createdOrder) {
       setOrders(prev => [createdOrder, ...prev]);
       clearCart();
@@ -236,7 +268,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       // Local fallback
       const fallbackOrder: Order = {
-        id: `SX-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: `SX-${Date.now().toString().slice(-6)}${Math.floor(1000 + Math.random() * 9000)}`,
         items: cart.map(item => ({
           productTitle: item.product.title,
           productImage: item.product.image,

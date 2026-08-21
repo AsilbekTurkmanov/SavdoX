@@ -14,8 +14,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
   onOrderSuccess
 }) => {
-  if (!isOpen) return null;
-
   const { user, cart, selectedCity, placeOrder } = useApp();
 
   const [customerName, setCustomerName] = useState(user?.name || '');
@@ -26,13 +24,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState('');
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  React.useEffect(() => {
+    if (user) {
+      if (user.name) setCustomerName(user.name);
+      if (user.phone) setCustomerPhone(user.phone);
+    }
+  }, [user]);
+
+  if (!isOpen) return null;
+
+  const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const deliveryFee = deliveryMethod === 'Courier' ? 15000 : 0;
+  const totalAmount = subtotal + deliveryFee;
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerPhone) return;
 
-    const newOrder = await placeOrder(deliveryMethod, deliveryAddress, paymentMethod);
+    const newOrder = await placeOrder(deliveryMethod, deliveryAddress, paymentMethod, totalAmount);
     if (newOrder) {
       setPlacedOrderId(newOrder.id);
       setIsSubmitted(true);

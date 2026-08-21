@@ -19,21 +19,20 @@ interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
   onOpenCart: () => void;
+  onOpenCheckout?: () => void;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
   onClose,
-  onOpenCart
+  onOpenCart,
+  onOpenCheckout
 }) => {
-  if (!product) return null;
-
   const { favorites, toggleFavorite, addToCart } = useApp();
-  const isFav = favorites.includes(product.id);
 
-  const [selectedImage, setSelectedImage] = useState(product.image);
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || '');
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || '');
+  const [selectedImage, setSelectedImage] = useState(product?.image || '');
+  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || '');
+  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || '');
   const [installmentMonths, setInstallmentMonths] = useState<3 | 6 | 12 | 24>(12);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews'>('desc');
@@ -43,6 +42,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     { id: '1', name: 'Jasur Bek', rating: 5, date: '12 Yanvar 2025', comment: 'Juda tez va sifatli yetib keldi. Mahsulot rasmdegidek original!' },
     { id: '2', name: 'Malika R.', rating: 5, date: '3 Fevral 2025', comment: 'SavdoX platformasidan har doim nasiyaga olaman. Juda qulay va halol hal etishadi.' }
   ]);
+
+  React.useEffect(() => {
+    if (product) {
+      setSelectedImage(product.image);
+      setSelectedColor(product.colors?.[0] || '');
+      setSelectedSize(product.sizes?.[0] || '');
+      setQuantity(1);
+    }
+  }, [product]);
+
+  if (!product) return null;
+
+  const isFav = favorites.includes(product.id);
 
   const galleryImages = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
 
@@ -248,7 +260,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   </button>
                   <span className="w-7 text-center font-bold text-xs sm:text-sm">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold flex items-center justify-center text-xs sm:text-sm"
                   >
                     +
@@ -271,7 +283,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <button
                 onClick={() => {
                   addToCart(product, quantity, selectedColor, selectedSize);
-                  onOpenCart();
+                  if (onOpenCheckout) {
+                    onOpenCheckout();
+                  } else {
+                    onOpenCart();
+                  }
                   onClose();
                 }}
                 className="flex-1 bg-uzum-primary hover:bg-uzum-primary-hover text-white font-black py-3 sm:py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 text-xs sm:text-base"

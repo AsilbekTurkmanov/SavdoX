@@ -3,6 +3,7 @@ import {
   X, 
   PlusCircle, 
   Trash2, 
+  Edit,
   ShieldCheck, 
   Package, 
   ShoppingBag, 
@@ -30,8 +31,6 @@ const PRESET_IMAGES = [
 ];
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
   const { 
     products, 
     categories, 
@@ -60,6 +59,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
   // Edit modal state
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  if (!isOpen) return null;
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -396,6 +397,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="flex items-center space-x-2 shrink-0">
+                      {/* Edit button */}
+                      <button
+                        onClick={() => setEditingProduct(p)}
+                        className="flex items-center space-x-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-xs font-bold transition-colors"
+                        title="Buyumni tahrirlash"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span className="hidden sm:inline">Tahrirlash</span>
+                      </button>
+
                       {/* Delete button */}
                       <button
                         onClick={() => handleDeleteProduct(p.id, p.title)}
@@ -497,6 +508,102 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
+
+      {/* EDIT PRODUCT MODAL */}
+      {editingProduct && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 relative text-xs">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="font-black text-base text-uzum-text">Mahsulotni tahrirlash</h3>
+              <button onClick={() => setEditingProduct(null)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              await updateProduct(editingProduct);
+              showNotification(`"${editingProduct.title}" muvaffaqiyatli yangilandi!`);
+              setEditingProduct(null);
+            }} className="space-y-3">
+              <div>
+                <label className="font-bold text-gray-700 block mb-1">Nomi</label>
+                <input
+                  type="text"
+                  required
+                  value={editingProduct.title}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, title: e.target.value })}
+                  className="w-full border border-gray-200 rounded-xl p-2.5 outline-none focus:border-uzum-primary font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-gray-700 block mb-1">Narxi (so'm)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editingProduct.price}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
+                    className="w-full border border-gray-200 rounded-xl p-2.5 outline-none focus:border-uzum-primary font-bold text-uzum-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-gray-700 block mb-1">Omborda miqdor (ta)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editingProduct.stock}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })}
+                    className="w-full border border-gray-200 rounded-xl p-2.5 outline-none focus:border-uzum-primary font-medium"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-gray-700 block mb-1">Kategoriya</label>
+                <select
+                  value={editingProduct.category}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                  className="w-full border border-gray-200 rounded-xl p-2.5 outline-none focus:border-uzum-primary font-bold"
+                >
+                  {categories.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="font-bold text-gray-700 block mb-1">Rasm URL</label>
+                <input
+                  type="text"
+                  required
+                  value={editingProduct.image}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                  className="w-full border border-gray-200 rounded-xl p-2.5 outline-none focus:border-uzum-primary font-mono text-[11px]"
+                />
+              </div>
+
+              <div className="pt-2 flex space-x-2">
+                <button
+                  type="submit"
+                  className="flex-1 bg-uzum-primary text-white font-bold py-3 rounded-xl hover:bg-uzum-primary-hover transition-colors"
+                >
+                  Saqlash
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingProduct(null)}
+                  className="px-4 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200"
+                >
+                  Bekor qilish
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
