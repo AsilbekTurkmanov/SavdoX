@@ -2,15 +2,24 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pkg from 'pg';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const { Pool } = pkg;
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static assets from built dist folder
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // PostgreSQL Connection Pool
 const pool = new Pool({
@@ -968,6 +977,16 @@ app.post('/api/reviews', async (req, res) => {
     console.error('Error adding review:', err);
     res.status(500).json({ error: 'Sharh qo\'shishda xatolik.' });
   }
+});
+
+// SPA Fallback for frontend routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
+    if (err) {
+      res.status(404).send('SavdoX Backend Server running. Run "npm run build" to build frontend UI.');
+    }
+  });
 });
 
 // Start Express Server
