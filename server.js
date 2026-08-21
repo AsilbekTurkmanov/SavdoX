@@ -979,8 +979,8 @@ app.post('/api/reviews', async (req, res) => {
   }
 });
 
-// SPA Fallback for frontend routes
-app.get('*', (req, res, next) => {
+// SPA Fallback for frontend routes (Express 5 compatible)
+app.use((req, res, next) => {
   if (req.path.startsWith('/api')) return next();
   res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
     if (err) {
